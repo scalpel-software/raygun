@@ -4,6 +4,16 @@ defmodule Raygun.Util do
   of stacktrace data into strings.
   """
 
+  @environment_name Mix.env()
+
+  @doc """
+  Determines whether we will actually send an event to Raygun
+  """
+
+  def send? do
+    @environment_name in get_env(:raygun, :included_environments, [:prod])
+  end
+
   @doc """
   Headers are a list of Tuples. Convert them to a map
   """

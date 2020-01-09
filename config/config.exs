@@ -28,7 +28,8 @@ use Mix.Config
 #     import_config "#{Mix.env}.exs"
 
 ## Sample Raygun config
-# config :raygun,
+config :raygun,
+  included_environments: [:test, :dev, :prod]
 #     api_key: "<YOUR API KEY GOES HERE>",
 #     tags: [:dev, :alpha],
 #     system_user: %{

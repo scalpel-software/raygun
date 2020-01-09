@@ -6,7 +6,7 @@ defmodule Raygun do
   2. Any exceptions that occur in a Plug
   3. Programmatically
 
-  All the functions will return `:ok` or `{:error, reason}`
+  All the functions will return `:ok`, `{:error, reason}`, or :ignored
   """
 
   @api_endpoint "https://api.raygun.io/entries"
@@ -16,18 +16,22 @@ defmodule Raygun do
   can also be used to report any string message.
   """
   def report_message(msg, opts \\ []) do
-    msg
-    |> Raygun.Format.message_payload(opts)
-    |> send_report()
+    if Raygun.Util.send?() do
+      msg |> Raygun.Format.message_payload(opts) |> send_report()
+    else
+      :ignored
+    end
   end
 
   @doc """
   Reports an exception and its corresponding stacktrace to Raygun.
   """
   def report_stacktrace(stacktrace, exception, opts \\ []) do
-    stacktrace
-    |> Raygun.Format.stacktrace_payload(exception, opts)
-    |> send_report()
+    if Raygun.Util.send?() do
+      stacktrace |> Raygun.Format.stacktrace_payload(exception, opts) |> send_report()
+    else
+      :ignored
+    end
   end
 
   @doc """
@@ -36,9 +40,11 @@ defmodule Raygun do
   the exception occurred by retrieving some state from the Plug Conn.
   """
   def report_plug(conn, stacktrace, exception, opts \\ []) do
-    conn
-    |> Raygun.Format.conn_payload(stacktrace, exception, opts)
-    |> send_report()
+    if Raygun.Util.send?() do
+      conn |> Raygun.Format.conn_payload(stacktrace, exception, opts) |> send_report()
+    else
+      :ignored
+    end
   end
 
   defp send_report(error) do
