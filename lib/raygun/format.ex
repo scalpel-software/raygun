@@ -133,7 +133,7 @@ defmodule Raygun.Format do
         "httpMethod" => conn.method,
         "iPAddress" => conn.remote_ip |> :inet.ntoa() |> List.to_string(),
         "queryString" => Plug.Conn.fetch_query_params(conn).query_params,
-        "form" => Plug.Parsers.call(conn, []).params,
+        "form" => find_params(conn),
         "headers" => Raygun.Util.format_headers(conn.req_headers),
         "rawData" => %{}
       }
@@ -217,4 +217,10 @@ defmodule Raygun.Format do
     {os_type, os_flavor} = :os.type()
     "#{os_type} - #{os_flavor}"
   end
+
+  defp find_params(%Plug.Conn{params: %Plug.Conn.Unfetched{}} = conn) do
+    Plug.Parsers.call(conn, []).params
+  end
+
+  defp find_params(conn), do: conn.params
 end
