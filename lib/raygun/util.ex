@@ -4,14 +4,13 @@ defmodule Raygun.Util do
   of stacktrace data into strings.
   """
 
-  @environment_name Mix.env()
+  @default_environment_name Mix.env()
 
   @doc """
   Determines whether we will actually send an event to Raygun
   """
-
   def send? do
-    @environment_name in get_env(:raygun, :included_environments, [:prod])
+    environment_name() in included_environments()
   end
 
   @doc """
@@ -76,4 +75,12 @@ defmodule Raygun.Util do
 
   defp read_from_system({:system, env}, default), do: System.get_env(env) || default
   defp read_from_system(value, _default), do: value
+
+  defp environment_name do
+    get_env(:raygun, :environment_name, @default_environment_name)
+  end
+
+  defp included_environments do
+    get_env(:raygun, :included_environments, [:prod])
+  end
 end
