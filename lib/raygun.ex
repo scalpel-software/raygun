@@ -16,7 +16,7 @@ defmodule Raygun do
   can also be used to report any string message.
   """
   def report_message(msg, opts \\ []) do
-    if Raygun.Util.send?() do
+    if Raygun.Util.environment?() && Raygun.Util.msg_valid?(msg) do
       msg |> Raygun.Format.message_payload(opts) |> send_report()
     else
       :ignored
@@ -27,7 +27,7 @@ defmodule Raygun do
   Reports an exception and its corresponding stacktrace to Raygun.
   """
   def report_stacktrace(stacktrace, exception, opts \\ []) do
-    if Raygun.Util.send?() do
+    if Raygun.Util.environment?() do
       stacktrace |> Raygun.Format.stacktrace_payload(exception, opts) |> send_report()
     else
       :ignored
@@ -40,7 +40,7 @@ defmodule Raygun do
   the exception occurred by retrieving some state from the Plug Conn.
   """
   def report_plug(conn, stacktrace, exception, opts \\ []) do
-    if Raygun.Util.send?() do
+    if Raygun.Util.environment?() do
       conn |> Raygun.Format.conn_payload(stacktrace, exception, opts) |> send_report()
     else
       :ignored

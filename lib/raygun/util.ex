@@ -9,8 +9,14 @@ defmodule Raygun.Util do
   @doc """
   Determines whether we will actually send an event to Raygun
   """
-  def send? do
+  def environment? do
     environment_name() in included_environments()
+  end
+
+  def msg_valid?(msg) do
+    Enum.any?(get_env(:raygun, :excluded_messages, []), fn regex ->
+      String.match?(msg, regex)
+    end)
   end
 
   @doc """
