@@ -194,7 +194,7 @@ defmodule Raygun.Format do
       "lineNumber" => Raygun.Util.line_from(location),
       "className" => Raygun.Util.mod_for(module),
       "fileName" => Raygun.Util.file_from(location),
-      "methodName" => Raygun.Util.function_and_arity(function, arity_or_args)
+      "methodName" => Exception.format_mfa(module, function, arity_or_args)
     }
   end
 

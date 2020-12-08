@@ -29,18 +29,6 @@ defmodule Raygun.Util do
   end
 
   @doc """
-  Given a function name (atom) and arity (number), return a string in the form
-  func_name/2.
-  """
-  def function_and_arity(function, list) when is_list(list) do
-    function_and_arity(function, length(list))
-  end
-
-  def function_and_arity(function, arity) do
-    "#{Atom.to_string(function)}/#{arity}"
-  end
-
-  @doc """
   Return the module name as a string (binary).
   """
   def mod_for(module) when is_atom(module), do: Atom.to_string(module)
