@@ -54,7 +54,7 @@ defmodule Raygun.Mixfile do
   defp deps do
     [
       {:jason, "~> 1.2"},
-      {:httpoison, "~> 1.7.0"},
+      {:httpoison, "~> 1.8.0"},
       {:plug, "~> 1.1"},
       {:earmark, "~> 1.4.5", only: :dev},
       {:ex_doc, "~> 0.23", only: :dev},
