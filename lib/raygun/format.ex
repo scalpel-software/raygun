@@ -22,6 +22,8 @@ defmodule Raygun.Format do
         |> Map.merge(environment())
         |> Map.merge(user(opts))
         |> Map.merge(custom(opts))
+        |> Map.merge(request(Keyword.get(opts, :conn, nil)))
+        |> Map.merge(response(Keyword.get(opts, :conn, nil)))
         |> Map.merge(%{"error" => %{"message" => msg}})
     }
   end
@@ -125,13 +127,14 @@ defmodule Raygun.Format do
   @doc """
   Given a Plug Conn return a map containing information about the request.
   """
+  def request(nil), do: %{}
   def request(conn) do
     %{
       "request" => %{
         "hostName" => conn.host,
         "url" => conn.request_path,
         "httpMethod" => conn.method,
-        "iPAddress" => conn.remote_ip |> :inet.ntoa() |> List.to_string(),
+        "iPAddress" => find_ip_address(conn),
         "queryString" => Plug.Conn.fetch_query_params(conn).query_params,
         "form" => find_params(conn),
         "headers" => Raygun.Util.format_headers(conn.req_headers),
@@ -143,6 +146,7 @@ defmodule Raygun.Format do
   @doc """
   Given a Plug Conn return a map containing information about the response.
   """
+  def response(nil), do: %{}
   def response(conn) do
     %{"response" => %{"statusCode" => conn.status}}
   end
@@ -223,4 +227,18 @@ defmodule Raygun.Format do
   end
 
   defp find_params(conn), do: conn.params
+
+  defp find_ip_address(conn) do 
+    conn |> proxy_or_remote() |> :inet_parse.ntoa() |> to_string()
+  end
+
+  defp proxy_or_remote(conn) do
+    from_proxy(conn.adapter) || conn.remote_ip
+  end
+
+  defp from_proxy({_module, request}) do
+    request
+    |> Map.get(:proxy_header, %{})
+    |> Map.get(:src_address, nil)
+  end
 end
