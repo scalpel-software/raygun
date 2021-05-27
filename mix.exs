@@ -59,7 +59,7 @@ defmodule Raygun.Mixfile do
       {:earmark, "~> 1.4.5", only: :dev},
       {:ex_doc, "~> 0.23", only: :dev},
       {:meck, "~> 0.9", only: :test},
-      {:excoveralls, "~> 0.13.0", only: :test}
+      {:excoveralls, "~> 0.14.0", only: :test}
     ]
   end
 
